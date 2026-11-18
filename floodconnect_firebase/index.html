@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FloodConnect | Smart Flood Family Tracking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">F</div>
+        <div><strong>FloodConnect</strong><span>SMART RELIEF NETWORK</span></div>
+      </div>
+      <div class="role-label">WORKSPACE</div>
+      <button class="role-button active" data-role="admin"><span>▦</span> Admin dashboard</button>
+      <button class="role-button" data-role="family"><span>⌂</span> Family portal</button>
+      <button class="role-button" data-role="rescue"><span>✚</span> Rescue team</button>
+      <div class="sidebar-bottom">
+        <div class="offline-pill" id="connection-status"><i></i> Connecting to Firebase…</div>
+        <p>One Family ID.<br>Multiple Rescue Locations.<br><b>One Connected Family.</b></p>
+        <small>Team Aether · SVIET</small>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow" id="top-eyebrow">DISASTER RESPONSE NETWORK</div>
+          <h1 id="page-title">Operations overview</h1>
+        </div>
+        <div class="top-actions">
+          <span class="demo-tag">PROTOTYPE</span>
+          <button class="icon-button" id="reset-demo" title="Reset demo data">↻</button>
+          <div class="avatar">TA</div>
+        </div>
+      </header>
+
+      <section class="notice">
+        <span class="notice-icon">i</span>
+        <span><b>Demonstration prototype:</b> fictional records sync through Firebase for this demo. No real emergency service, live location, SMS or trained AI is connected. Do not enter real personal or emergency data.</span>
+      </section>
+
+      <section id="admin-view" class="role-view">
+        <div class="welcome-row">
+          <div><h2>Good morning, Response Team</h2><p>Here’s the latest activity across the FloodConnect demo network.</p></div>
+          <span class="date-chip" id="today-date"></span>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Registered people</span><span class="stat-icon blue">♙</span></div><strong id="stat-people">0</strong><small>Across registered families</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Missing reports</span><span class="stat-icon red">⌕</span></div><strong id="stat-missing">0</strong><small>Awaiting confirmation</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Rescued people</span><span class="stat-icon green">✓</span></div><strong id="stat-rescued">0</strong><small>Records added by rescue teams</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Active rescue camps</span><span class="stat-icon amber">⌂</span></div><strong id="stat-camps">0</strong><small>Demo camp directory</small></article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>People status</h3><p>Current records in this demo</p></div><span class="live-dot">● Updated locally</span></div>
+            <div class="status-bars" id="status-bars"></div>
+          </article>
+          <article class="panel quick-panel">
+            <div class="panel-heading"><div><h3>Quick actions</h3><p>Open a workspace to add records</p></div></div>
+            <button class="quick-action" data-goto="family"><span class="quick-icon blue">＋</span><span><b>Register a family</b><small>Create a Family ID and add members</small></span><em>→</em></button>
+            <button class="quick-action" data-goto="rescue"><span class="quick-icon green">＋</span><span><b>Add rescued person</b><small>Record a person found by a team</small></span><em>→</em></button>
+            <button class="quick-action" id="go-matches"><span class="quick-icon purple">✧</span><span><b>Review smart matches</b><small>Compare missing and rescued records</small></span><em>→</em></button>
+          </article>
+        </div>
+
+        <article class="panel table-panel">
+          <div class="panel-heading"><div><h3>Recent family records</h3><p>Latest registered families and their status</p></div><button class="text-button" id="export-data">Export CSV ↓</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Family ID</th><th>Family contact</th><th>Members</th><th>Registered at</th><th>Status</th></tr></thead><tbody id="family-table"></tbody></table></div>
+        </article>
+        <div class="content-grid lower-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Smart matching</h3><p>Rule-based suggestions for this prototype</p></div><span class="soft-badge purple-badge">HUMAN REVIEW</span></div>
+            <div id="match-preview" class="match-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Rescue camp directory</h3><p>Camp capacity and occupancy</p></div></div>
+            <div id="camp-preview" class="camp-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="family-view" class="role-view hidden">
+        <div class="section-intro"><div><span class="section-kicker">FAMILY SERVICES</span><h2>Stay connected. Stay informed.</h2><p>Register your family, report a missing member and check the latest verified status using your Family ID.</p></div><div class="intro-art">⌂</div></div>
+        <div class="content-grid family-grid">
+          <article class="panel form-panel">
+            <div class="panel-heading"><div><h3>Family registration</h3><p>Create a shared record for your family</p></div><span class="step-badge">01</span></div>
+            <form id="family-form">
+              <label>Family contact name<input required name="contact" placeholder="e.g. Asha Verma"></label>
+              <div class="form-two"><label>Phone number<input required name="phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number"></label><label>Home area / village<input required name="area" placeholder="Village or locality"></label></div>
+              <label>Family members <span class="label-note">Enter names separated by commas</span><textarea required name="members" rows="3" placeholder="e.g. Asha Verma, Rohan Verma, Meera Verma"></textarea></label>
+              <button class="primary-button" type="submit">Generate Family ID <span>→</span></button>
+            </form>
+            <div id="family-success" class="success-box hidden"></div>
+          </article>
+          <article class="panel form-panel">
+            <div class="panel-heading"><div><h3>Report a missing person</h3><p>Link the report to an existing Family ID</p></div><span class="step-badge">02</span></div>
+            <form id="missing-form">
+              <label>Family ID<input required name="familyId" placeholder="e.g. FC-2026-001"></label>
+              <label>Missing person's full name<input required name="name" placeholder="Name as registered"></label>
+              <div class="form-two"><label>Approx. age<input required name="age" type="number" min="0" max="120" placeholder="Age"></label><label>Last known location<input required name="location" placeholder="Area / camp"></label></div>
+              <label>Additional information<textarea name="details" rows="2" placeholder="Clothing or other helpful identifying details"></textarea></label>
+              <button class="primary-button" type="submit">Submit missing report <span>→</span></button>
+            </form>
+            <div id="missing-success" class="success-box hidden"></div>
+          </article>
+        </div>
+        <article class="panel lookup-panel">
+          <div class="panel-heading"><div><h3>Check family status</h3><p>View registered family members and verified updates</p></div></div>
+          <form id="lookup-form" class="lookup-form"><input required name="familyId" placeholder="Enter your Family ID"><button class="secondary-button">Find family</button></form>
+          <div id="lookup-result" class="lookup-result empty-state">Your family information will appear here after you search.</div>
+        </article>
+      </section>
+
+      <section id="rescue-view" class="role-view hidden">
+        <div class="section-intro rescue-intro"><div><span class="section-kicker">FIELD OPERATIONS</span><h2>Rescue team workspace</h2><p>Record people found by your team and keep camp information updated.</p></div><div class="intro-art">✚</div></div>
+        <div class="content-grid rescue-grid">
+          <article class="panel form-panel">
+            <div class="panel-heading"><div><h3>Register rescued person</h3><p>Add a safe-person record for matching</p></div><span class="step-badge">01</span></div>
+            <form id="rescued-form">
+              <label>Person's full name<input required name="name" placeholder="Name provided by person"></label>
+              <div class="form-two"><label>Approx. age<input required name="age" type="number" min="0" max="120" placeholder="Age"></label><label>Rescue camp<select required name="camp" id="rescued-camp"></select></label></div>
+              <label>Current location<input required name="location" placeholder="Camp / area / district"></label>
+              <label>Rescue team / officer<input required name="team" placeholder="Team name"></label>
+              <button class="primary-button" type="submit">Save rescued record <span>→</span></button>
+            </form>
+            <div id="rescued-success" class="success-box hidden"></div>
+          </article>
+          <article class="panel form-panel">
+            <div class="panel-heading"><div><h3>Update camp information</h3><p>Add a camp to the shared directory</p></div><span class="step-badge">02</span></div>
+            <form id="camp-form">
+              <label>Camp name<input required name="name" placeholder="e.g. Community Relief Camp"></label>
+              <label>Location<input required name="location" placeholder="Town / district"></label>
+              <div class="form-two"><label>Total capacity<input required name="capacity" type="number" min="1" placeholder="100"></label><label>Current occupancy<input required name="occupied" type="number" min="0" placeholder="25"></label></div>
+              <button class="primary-button" type="submit">Add rescue camp <span>→</span></button>
+            </form>
+            <div id="camp-success" class="success-box hidden"></div>
+          </article>
+        </div>
+        <article class="panel table-panel">
+          <div class="panel-heading"><div><h3>Recent rescued-person records</h3><p>Records entered by rescue teams</p></div><span class="soft-badge green-badge">FIELD RECORDS</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Record ID</th><th>Name</th><th>Age</th><th>Current location</th><th>Camp</th><th>Status</th></tr></thead><tbody id="rescued-table"></tbody></table></div>
+        </article>
+      </section>
+
+      <section id="matches-view" class="role-view hidden">
+        <div class="section-intro match-intro"><div><span class="section-kicker">ASSISTED VERIFICATION</span><h2>Smart match review</h2><p>The prototype compares names and approximate ages to suggest possible records. A human must verify every match.</p></div><div class="intro-art">✧</div></div>
+        <div class="notice warning-notice"><span class="notice-icon">!</span><span>Suggestions are not proof of identity. Do not reunite anyone based only on a software match. Confirm identity through authorised procedures.</span></div>
+        <article class="panel">
+          <div class="panel-heading"><div><h3>Possible matches</h3><p>Review each suggestion and confirm only when independently verified</p></div><button class="secondary-button" id="refresh-matches">Refresh suggestions</button></div>
+          <div id="all-matches" class="match-review-list"></div>
+        </article>
+      </section>
+
+      <section id="camps-view" class="role-view hidden">
+        <div class="section-intro"><div><span class="section-kicker">RELIEF NETWORK</span><h2>Rescue camp directory</h2><p>View relief locations and their reported occupancy.</p></div><div class="intro-art">⌂</div></div>
+        <div id="all-camps" class="camp-grid"></div>
+      </section>
+
+      <footer class="footer"><span>FloodConnect · Team Aether</span><span>Prototype for Microsoft Ideathon 2.0</span></footer>
+    </main>
+  </div>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
